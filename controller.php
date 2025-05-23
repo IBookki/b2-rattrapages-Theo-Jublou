@@ -48,3 +48,24 @@ function createCommande($data) {
         return false;
     }
 }
+
+function updateCommandeStatus($id, $statut) {
+    global $pdo;
+    
+    $statutsValides = ['Commande prise en compte', 'En cours', 'Réalisée', 'Annulée'];
+    
+    if (!in_array($statut, $statutsValides)) {
+        return false;
+    }
+    
+    try {
+        $stmt = $pdo->prepare('UPDATE commandes SET statut = :statut WHERE id = :id');
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':statut', $statut, PDO::PARAM_STR);
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Erreur lors de la mise à jour du statut: " . $e->getMessage();
+        return false;
+    }
+}
+?>
